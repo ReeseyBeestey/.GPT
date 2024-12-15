@@ -1,27 +1,37 @@
 from PIL import Image
 import numpy as np
  # You'll need to add your paths and change the amount of colors here ↓
-def save_as_gpt(image_path, output_path, palette_size=48):
-    # Open image and convert to reduced color palette
-    img = Image.open(image_path).convert('RGB')
-    img = img.convert('P', palette=Image.ADAPTIVE, colors=palette_size)
-    img_data = np.array(img)
-    palette = img.getpalette()[:palette_size * 3]
+input_path =r"C:\Users\mcari\Downloads\testing_gptconversion.png"
+output_path =r"C:\Users\mcari\Downloads\test.gpt"
+from PIL import Image
+import os
 
-    # Create .gpt file content
+def convert_png_to_gpt(image_path, output_path, target_colors=48):
+    # Open the image
+    img = Image.open(image_path).convert('RGB')  # Open and convert to RGB mode
+
+    # Convert the image to P mode (palette-based image)
+    img = img.convert("P", palette=Image.ADAPTIVE, colors=target_colors)
+
+    # Get image dimensions and pixel data
+    width, height = img.size
+    pixel_data = list(img.getdata())
+
+    # Get the image's palette
+    palette = img.getpalette()[:target_colors * 3]  # Only take the first `target_colors` colors
+
+    # Save as GPT file
     with open(output_path, "wb") as f:
-        # Header
-        f.write(f"GPTv1\n".encode())  # File signature
-        f.write(f"{img.width} {img.height}\n".encode())
-        f.write(f"{palette_size}\n".encode())
-        
-        # Palette
-        for i in range(palette_size):
-            color = palette[i*3:i*3+3] if i*3 < len(palette) else [0, 0, 0]
-            f.write(bytes(color))  # Write RGB values
-        
-        # Pixel Data
-        for color_index in img_data.flatten():
-            f.write(bytes([color_index]))  # Write color index
+        f.write(b"GPTv1\n")
+        f.write(f"{width} {height}\n".encode())
+        f.write(f"{target_colors}\n".encode())
 
-    print(f"Image saved as {output_path}!")
+        # Write the palette
+        for i in range(target_colors):
+            f.write(bytes(palette[i * 3:i * 3 + 3]))
+
+        # Write pixel data
+        for pixel in pixel_data:
+            f.write(bytes([pixel]))
+
+    print(f"Image converted to GPT and saved as {output_path}!")
