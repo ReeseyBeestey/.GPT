@@ -1,5 +1,4 @@
 **GPT Image Format**
-Note: The file create_gptfile.py went untested, so it might not work.
 Scroll down for instructions on how to use this, and a Q&A section.
 This project introduces a custom GPT image format, the first file format designed almost entirely by ChatGPT (Idea made humanly, all code written by AI, even a large part of the file you're reading right now)! It is designed to store images with a reduced color palette and optimized pixel data using Run-Length Encoding (RLE). It supports converting PNG images to the GPT format, and decoding them back to PNG.
 
